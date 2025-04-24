@@ -24,7 +24,7 @@ public class AuthService {
         this.jwtUtil = jwtUtil;
     }
 
-    public User registerUser (UserInformDto userInformDto ) {
+    public User registerUser (UserInformDto userInformDto) {
         return this.userService.createUser(userInformDto);
     }
 

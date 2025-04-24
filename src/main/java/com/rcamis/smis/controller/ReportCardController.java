@@ -21,17 +21,39 @@ public class ReportCardController {
     }
 
     @GetMapping()
-    public ResponseEntity<ApiResponse<List<ReportCard>>> getReportCards () {
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Successfully obtained report cards!! 🎉🎉🎉", this.reportCardService.getReportCards()));
+    public ResponseEntity<ApiResponse<List<ReportCard>>> getAllReportCards () {
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Successfully obtained report cards!!! 🎉🎉🎉", this.reportCardService.getReportCards()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<ReportCard>> getReportCard (@PathVariable int id) {
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Successfully obtained report card!!! 🎉🎉🎉", this.reportCardService.getReportCard(id)));
+    public ResponseEntity<ApiResponse<ReportCard>> getReportCardById (@PathVariable int id) {
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Successfully obtained report card!!! 🎉🎉🎉", this.reportCardService.getReportCardById(id)));
+    }
+
+    @GetMapping("/student/{id}")
+    public ResponseEntity<ApiResponse<ReportCard>> getReportCardByStudentId (@PathVariable int id) {
+        ReportCard reportCard = this.reportCardService.getReportCardByStudentId(id);
+        if (reportCard != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Successfully obtained student report card!!! 🎉🎉🎉", reportCard));
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, "Failed to obtain report student!!! 💔💔💔", null));
+        }
+    }
+
+    @GetMapping("/term/{termId}")
+    public ResponseEntity<ApiResponse<ReportCard>> getReportCardByTermId (@PathVariable int termId) {
+        ReportCard reportCard = this.reportCardService.getReportCardByTermId(termId);
+        if (reportCard != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Successfully obtained report card!!! 🎉🎉🎉", reportCard));
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(false, "Failed to obtain report card!!!", null));
+        }
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse<ReportCard>> generateReportCard (@RequestBody ReportCardDto reportCardDto, @RequestParam("reportFile") MultipartFile reportFile) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true, "Successfully created report card!! 🎉🎉🎉", this.reportCardService.createReportCard(reportCardDto, reportFile)));
+    public ResponseEntity<ApiResponse<ReportCard>> generateReportCard (@RequestPart("reportCardDto") ReportCardDto reportCardDto, @RequestPart("reportFile") MultipartFile reportFile) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true, "Successfully created report card!!! 🎉🎉🎉", this.reportCardService.createReportCard(reportCardDto, reportFile)));
     }
 }

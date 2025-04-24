@@ -17,19 +17,16 @@ public class FileService {
     private String uploadDir;
 
     public String uploadFile(MultipartFile reportFile) throws IOException {
-        // Create directory if not exists
         Path uploadPath = Paths.get(uploadDir);
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
 
-        // Get the destination path
         String fileName = reportFile.getOriginalFilename();
         Path filePath = uploadPath.resolve(fileName);
 
-        // Copy the file to the destination
         Files.copy(reportFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-        return filePath.toString(); // Return full path or just file name
+        return filePath.toString();
     }
 }

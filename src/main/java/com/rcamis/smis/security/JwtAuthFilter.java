@@ -20,6 +20,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService userDetailsService;
 
+    private static final String[] PERMITTED_URLS = {
+            "/api/rcamis/v1/auth/.*$",
+            "/api/rcamis/v1/user/.*$",
+            "/api/rcamis/v1/report-card/.*$"
+    };
+
     public JwtAuthFilter (JwtUtil jwtUtil, CustomUserDetailsService userDetailsService) {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
@@ -31,6 +37,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain)
             throws ServletException, IOException {
+
+        // Check if the request URL matches any permitAll endpoint
+        for (String url : PERMITTED_URLS) {
+            if (request.getRequestURI().matches(url)) {
+                filterChain.doFilter(request, response);  // Skip JWT validation for this request
+                return;
+            }
+        }
+
+        // JWT validation logic
         String authHeader = request.getHeader("authorization");
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
@@ -49,6 +65,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 logger.warn("Invalid Token: {}");
             }
         }
-        filterChain.doFilter(request, response);
+
+        filterChain.doFilter(request, response);  // Continue with the filter chain
     }
 }
